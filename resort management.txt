@@ -1,0 +1,1728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resort Management System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2a9d8f;
+            --secondary-color: #e9c46a;
+            --dark-color: #264653;
+            --light-color: #f8f9fa;
+            --danger-color: #e76f51;
+            --success-color: #2a9d8f;
+            --warning-color: #f4a261;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 250px;
+            background-color: var(--dark-color);
+            color: white;
+            padding: 20px;
+            transition: var(--transition);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--secondary-color);
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 10px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            color: #e0e0e0;
+            text-decoration: none;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--secondary-color);
+        }
+
+        .nav-link i {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            margin-left: 250px;
+            transition: var(--transition);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            color: var(--dark-color);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .user-name {
+            margin-right: 10px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        /* Dashboard Styles */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .stat-card-title {
+            font-size: 1rem;
+            color: #666;
+        }
+
+        .stat-card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .stat-card-icon.bookings {
+            background-color: var(--primary-color);
+        }
+
+        .stat-card-icon.occupancy {
+            background-color: var(--secondary-color);
+        }
+
+        .stat-card-icon.revenue {
+            background-color: var(--success-color);
+        }
+
+        .stat-card-icon.guests {
+            background-color: var(--warning-color);
+        }
+
+        .stat-card-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .stat-card-change {
+            font-size: 0.9rem;
+            color: var(--success-color);
+        }
+
+        .stat-card-change.negative {
+            color: var(--danger-color);
+        }
+
+        /* Section Styles */
+        .section {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: var(--box-shadow);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            color: var(--dark-color);
+        }
+
+        /* Table Styles */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            color: var(--dark-color);
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .status {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status.confirmed {
+            background-color: rgba(42, 157, 143, 0.2);
+            color: var(--success-color);
+        }
+
+        .status.pending {
+            background-color: rgba(244, 162, 97, 0.2);
+            color: var(--warning-color);
+        }
+
+        .status.cancelled {
+            background-color: rgba(231, 111, 81, 0.2);
+            color: var(--danger-color);
+        }
+
+        .status.checked-in {
+            background-color: rgba(42, 157, 143, 0.2);
+            color: var(--success-color);
+        }
+
+        .status.checked-out {
+            background-color: rgba(38, 70, 83, 0.2);
+            color: var(--dark-color);
+        }
+
+        /* Button Styles */
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            color: var(--dark-color);
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .btn-success {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .btn-warning {
+            background-color: var(--warning-color);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 0.8rem;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: var(--dark-color);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-col {
+            flex: 1;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            display: none;
+        }
+
+        .modal {
+            background-color: white;
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.2rem;
+            color: var(--dark-color);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            padding: 15px 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        /* Search and Filter Styles */
+        .search-filter {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 200px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 15px 10px 40px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+        }
+
+        .filter-dropdown {
+            min-width: 150px;
+        }
+
+        /* Room Grid Styles */
+        .room-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .room-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+        }
+
+        .room-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .room-image {
+            height: 150px;
+            background-color: #eee;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .room-details {
+            padding: 15px;
+        }
+
+        .room-number {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .room-type {
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .room-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .room-price {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        /* Tabs Styles */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: var(--transition);
+        }
+
+        .tab.active {
+            border-bottom-color: var(--primary-color);
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Alert Styles */
+        .alert {
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .alert-success {
+            background-color: rgba(42, 157, 143, 0.2);
+            color: var(--success-color);
+        }
+
+        .alert-danger {
+            background-color: rgba(231, 111, 81, 0.2);
+            color: var(--danger-color);
+        }
+
+        .alert-warning {
+            background-color: rgba(244, 162, 97, 0.2);
+            color: var(--warning-color);
+        }
+
+        .alert-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: inherit;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 80px;
+                padding: 20px 10px;
+            }
+
+            .logo {
+                display: none;
+            }
+
+            .logo-small {
+                display: block;
+                font-size: 1.5rem;
+                font-weight: 700;
+                color: var(--secondary-color);
+                text-align: center;
+            }
+
+            .nav-link span {
+                display: none;
+            }
+
+            .nav-link i {
+                margin-right: 0;
+                font-size: 1.5rem;
+            }
+
+            .main-content {
+                margin-left: 80px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                padding: 15px;
+            }
+
+            .sidebar-header {
+                margin-bottom: 0;
+            }
+
+            .logo {
+                display: block;
+            }
+
+            .logo-small {
+                display: none;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .nav-menu {
+                display: none;
+                margin-top: 20px;
+            }
+
+            .nav-menu.show {
+                display: block;
+            }
+
+            .nav-link span {
+                display: inline;
+            }
+
+            .nav-link i {
+                margin-right: 10px;
+                font-size: 1.2rem;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 15px;
+            }
+
+            .dashboard {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .user-info {
+                align-self: flex-end;
+            }
+
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+
+            .room-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Icons */
+        .icon {
+            display: inline-block;
+            width: 1em;
+            height: 1em;
+            stroke-width: 0;
+            stroke: currentColor;
+            fill: currentColor;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">Resort Manager</div>
+                <div class="logo-small">RM</div>
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="icon">≡</i>
+                </button>
+            </div>
+            <ul class="nav-menu" id="navMenu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active" data-page="dashboard">
+                        <i class="icon">📊</i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-page="bookings">
+                        <i class="icon">📅</i>
+                        <span>Bookings</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-page="guests">
+                        <i class="icon">👥</i>
+                        <span>Guests</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-page="rooms">
+                        <i class="icon">🏠</i>
+                        <span>Rooms</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-page="reports">
+                        <i class="icon">📈</i>
+                        <span>Reports</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-page="settings">
+                        <i class="icon">⚙️</i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <h1 class="page-title" id="pageTitle">Dashboard</h1>
+                <div class="user-info">
+                    <span class="user-name">Admin User</span>
+                    <div class="user-avatar">A</div>
+                </div>
+            </div>
+
+            <!-- Dashboard Page -->
+            <div class="page active" id="dashboard">
+                <div class="dashboard">
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <h3 class="stat-card-title">Total Bookings</h3>
+                            <div class="stat-card-icon bookings">📅</div>
+                        </div>
+                        <div class="stat-card-value">124</div>
+                        <div class="stat-card-change">+12% from last month</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <h3 class="stat-card-title">Occupancy Rate</h3>
+                            <div class="stat-card-icon occupancy">🏠</div>
+                        </div>
+                        <div class="stat-card-value">78%</div>
+                        <div class="stat-card-change">+5% from last month</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <h3 class="stat-card-title">Revenue</h3>
+                            <div class="stat-card-icon revenue">💰</div>
+                        </div>
+                        <div class="stat-card-value">$45,289</div>
+                        <div class="stat-card-change">+18% from last month</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <h3 class="stat-card-title">Total Guests</h3>
+                            <div class="stat-card-icon guests">👥</div>
+                        </div>
+                        <div class="stat-card-value">256</div>
+                        <div class="stat-card-change">+8% from last month</div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-header">
+                        <h2 class="section-title">Recent Bookings</h2>
+                        <button class="btn btn-primary" id="viewAllBookingsBtn">View All</button>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Booking ID</th>
+                                    <th>Guest Name</th>
+                                    <th>Room</th>
+                                    <th>Check-in</th>
+                                    <th>Check-out</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentBookingsTable">
+                                <!-- Bookings will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-header">
+                        <h2 class="section-title">Today's Check-ins & Check-outs</h2>
+                    </div>
+                    <div class="tabs">
+                        <div class="tab active" data-tab="check-ins">Check-ins</div>
+                        <div class="tab" data-tab="check-outs">Check-outs</div>
+                    </div>
+                    <div class="tab-content active" id="check-ins">
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Booking ID</th>
+                                        <th>Guest Name</th>
+                                        <th>Room</th>
+                                        <th>Arrival Time</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="checkInsTable">
+                                    <!-- Check-ins will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="tab-content" id="check-outs">
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Booking ID</th>
+                                        <th>Guest Name</th>
+                                        <th>Room</th>
+                                        <th>Departure Time</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="checkOutsTable">
+                                    <!-- Check-outs will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bookings Page -->
+            <div class="page" id="bookings">
+                <div class="section">
+                    <div class="section-header">
+                        <h2 class="section-title">All Bookings</h2>
+                        <button class="btn btn-primary" id="addBookingBtn">Add Booking</button>
+                    </div>
+                    <div class="search-filter">
+                        <div class="search-box">
+                            <i class="icon search-icon">🔍</i>
+                            <input type="text" placeholder="Search bookings..." id="bookingSearchInput">
+                        </div>
+                        <select class="form-control filter-dropdown" id="bookingStatusFilter">
+                            <option value="all">All Statuses</option>
+                            <option value="confirmed">Confirmed</option>
+                            <option value="pending">Pending</option>
+                            <option value="checked-in">Checked In</option>
+                            <option value="checked-out">Checked Out</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Booking ID</th>
+                                    <th>Guest Name</th>
+                                    <th>Room</th>
+                                    <th>Check-in</th>
+                                    <th>Check-out</th>
+                                    <th>Status</th>
+                                    <th>Total</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bookingsTable">
+                                <!-- Bookings will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Guests Page -->
+            <div class="page" id="guests">
+                <div class="section">
+                    <div class="section-header">
+                        <h2 class="section-title">All Guests</h2>
+                        <button class="btn btn-primary" id="addGuestBtn">Add Guest</button>
+                    </div>
+                    <div class="search-filter">
+                        <div class="search-box">
+                            <i class="icon search-icon">🔍</i>
+                            <input type="text" placeholder="Search guests..." id="guestSearchInput">
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Guest ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Total Stays</th>
+                                    <th>Last Visit</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="guestsTable">
+                                <!-- Guests will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rooms Page -->
+            <div class="page" id="rooms">
+                <div class="section">
+                    <div class="section-header">
+                        <h2 class="section-title">Room Management</h2>
+                        <button class="btn btn-primary" id="addRoomBtn">Add Room</button>
+                    </div>
+                    <div class="search-filter">
+                        <div class="search-box">
+                            <i class="icon search-icon">🔍</i>
+                            <input type="text" placeholder="Search rooms..." id="roomSearchInput">
+                        </div>
+                        <select class="form-control filter-dropdown" id="roomTypeFilter">
+                            <option value="all">All Types</option>
+                            <option value="standard">Standard</option>
+                            <option value="deluxe">Deluxe</option>
+                            <option value="suite">Suite</option>
+                            <option value="villa">Villa</option>
+                        </select>
+                        <select class="form-control filter-dropdown" id="roomStatusFilter">
+                            <option value="all">All Statuses</option>
+                            <option value="available">Available</option>
+                            <option value="occupied">Occupied</option>
+                            <option value="maintenance">Maintenance</option>
+                        </select>
+                    </div>
+                    <div class="room-grid" id="roomsGrid">
+                        <!-- Rooms will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reports Page -->
+            <div class="page" id="reports">
+                <div class="section">
+                    <div class="section-header">
+                        <h2 class="section-title">Reports & Analytics</h2>
+                    </div>
+                    <div class="tabs">
+                        <div class="tab active" data-tab="occupancy">Occupancy</div>
+                        <div class="tab" data-tab="revenue">Revenue</div>
+                        <div class="tab" data-tab="guest-stats">Guest Statistics</div>
+                    </div>
+                    <div class="tab-content active" id="occupancy">
+                        <div class="form-row">
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label class="form-label">Date Range</label>
+                                    <select class="form-control" id="occupancyDateRange">
+                                        <option value="7">Last 7 days</option>
+                                        <option value="30" selected>Last 30 days</option>
+                                        <option value="90">Last 90 days</option>
+                                        <option value="365">Last year</option>
+                                        <option value="custom">Custom range</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label class="form-label">Room Type</label>
+                                    <select class="form-control" id="occupancyRoomType">
+                                        <option value="all">All Types</option>
+                                        <option value="standard">Standard</option>
+                                        <option value="deluxe">Deluxe</option>
+                                        <option value="suite">Suite</option>
+                                        <option value="villa">Villa</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="occupancyChart" style="height: 300px; background-color: #f5f5f5; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                            <p>Occupancy chart will be displayed here</p>
+                        </div>
+                    </div>
+                    <div class="tab-content" id="revenue">
+                        <div class="form-row">
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label class="form-label">Date Range</label>
+                                    <select class="form-control" id="revenueDateRange">
+                                        <option value="7">Last 7 days</option>
+                                        <option value="30" selected>Last 30 days</option>
+                                        <option value="90">Last 90 days</option>
+                                        <option value="365">Last year</option>
+                                        <option value="custom">Custom range</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label class="form-label">Revenue Type</label>
+                                    <select class="form-control" id="revenueType">
+                                        <option value="all">All Revenue</option>
+                                        <option value="room">Room Revenue</option>
+                                        <option value="services">Additional Services</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="revenueChart" style="height: 300px; background-color: #f5f5f5; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                            <p>Revenue chart will be displayed here</p>
+                        </div>
+                    </div>
+                    <div class="tab-content" id="guest-stats">
+                        <div class="form-row">
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label class="form-label">Date Range</label>
+                                    <select class="form-control" id="guestStatsDateRange">
+                                        <option value="30">Last 30 days</option>
+                                        <option value="90" selected>Last 90 days</option>
+                                        <option value="365">Last year</option>
+                                        <option value="custom">Custom range</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="guestStatsChart" style="height: 300px; background-color: #f5f5f5; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                            <p>Guest statistics chart will be displayed here</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Page -->
+            <div class="page" id="settings">
+                <div class="section">
+                    <div class="section-header">
+                        <h2 class="section-title">System Settings</h2>
+                    </div>
+                    <div class="tabs">
+                        <div class="tab active" data-tab="general">General</div>
+                        <div class="tab" data-tab="users">Users</div>
+                        <div class="tab" data-tab="notifications">Notifications</div>
+                    </div>
+                    <div class="tab-content active" id="general">
+                        <form id="generalSettingsForm">
+                            <div class="form-group">
+                                <label class="form-label">Resort Name</label>
+                                <input type="text" class="form-control" id="resortName" value="Paradise Resort & Spa">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Contact Email</label>
+                                <input type="email" class="form-control" id="contactEmail" value="info@paradiseresort.com">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Contact Phone</label>
+                                <input type="text" class="form-control" id="contactPhone" value="+1 (555) 123-4567">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Address</label>
+                                <textarea class="form-control" id="resortAddress" rows="3">123 Beach Road, Paradise Island, FL 33123</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Check-in Time</label>
+                                <input type="time" class="form-control" id="checkInTime" value="14:00">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Check-out Time</label>
+                                <input type="time" class="form-control" id="checkOutTime" value="11:00">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </form>
+                    </div>
+                    <div class="tab-content" id="users">
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>User ID</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usersTable">
+                                    <tr>
+                                        <td>1</td>
+                                        <td>Admin User</td>
+                                        <td>admin@paradiseresort.com</td>
+                                        <td>Administrator</td>
+                                        <td><span class="status confirmed">Active</span></td>
+                                        <td>
+                                            <div class="action-buttons">
+                                                <button class="btn btn-sm btn-primary">Edit</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>2</td>
+                                        <td>Front Desk</td>
+                                        <td>frontdesk@paradiseresort.com</td>
+                                        <td>Staff</td>
+                                        <td><span class="status confirmed">Active</span></td>
+                                        <td>
+                                            <div class="action-buttons">
+                                                <button class="btn btn-sm btn-primary">Edit</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <button class="btn btn-primary" style="margin-top: 20px;">Add User</button>
+                    </div>
+                    <div class="tab-content" id="notifications">
+                        <form id="notificationSettingsForm">
+                            <div class="form-group">
+                                <label class="form-label">Email Notifications</label>
+                                <div>
+                                    <input type="checkbox" id="emailNewBooking" checked>
+                                    <label for="emailNewBooking">New Booking</label>
+                                </div>
+                                <div>
+                                    <input type="checkbox" id="emailCancellation" checked>
+                                    <label for="emailCancellation">Booking Cancellation</label>
+                                </div>
+                                <div>
+                                    <input type="checkbox" id="emailCheckIn" checked>
+                                    <label for="emailCheckIn">Guest Check-in</label>
+                                </div>
+                                <div>
+                                    <input type="checkbox" id="emailCheckOut">
+                                    <label for="emailCheckOut">Guest Check-out</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">System Notifications</label>
+                                <div>
+                                    <input type="checkbox" id="sysLowInventory" checked>
+                                    <label for="sysLowInventory">Low Inventory Alert</label>
+                                </div>
+                                <div>
+                                    <input type="checkbox" id="sysMaintenanceRequired" checked>
+                                    <label for="sysMaintenanceRequired">Maintenance Required</label>
+                                </div>
+                                <div>
+                                    <input type="checkbox" id="sysPaymentFailed" checked>
+                                    <label for="sysPaymentFailed">Payment Failed</label>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <!-- Add Booking Modal -->
+    <div class="modal-overlay" id="addBookingModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Add New Booking</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="addBookingForm">
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">Guest</label>
+                                <select class="form-control" id="bookingGuest" required>
+                                    <option value="">Select Guest</option>
+                                    <!-- Guests will be loaded here -->
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">Room</label>
+                                <select class="form-control" id="bookingRoom" required>
+                                    <option value="">Select Room</option>
+                                    <!-- Rooms will be loaded here -->
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">Check-in Date</label>
+                                <input type="date" class="form-control" id="bookingCheckIn" required>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">Check-out Date</label>
+                                <input type="date" class="form-control" id="bookingCheckOut" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">Adults</label>
+                                <input type="number" class="form-control" id="bookingAdults" min="1" value="1" required>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">Children</label>
+                                <input type="number" class="form-control" id="bookingChildren" min="0" value="0">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Special Requests</label>
+                        <textarea class="form-control" id="bookingRequests" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary modal-close-btn">Cancel</button>
+                <button class="btn btn-primary" id="saveBookingBtn">Save Booking</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Guest Modal -->
+    <div class="modal-overlay" id="addGuestModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Add New Guest</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="addGuestForm">
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">First Name</label>
+                                <input type="text" class="form-control" id="guestFirstName" required>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">Last Name</label>
+                                <input type="text" class="form-control" id="guestLastName" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" id="guestEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Phone</label>
+                        <input type="tel" class="form-control" id="guestPhone" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Address</label>
+                        <textarea class="form-control" id="guestAddress" rows="3"></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">ID Type</label>
+                                <select class="form-control" id="guestIdType">
+                                    <option value="passport">Passport</option>
+                                    <option value="drivers_license">Driver's License</option>
+                                    <option value="national_id">National ID</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">ID Number</label>
+                                <input type="text" class="form-control" id="guestIdNumber">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary modal-close-btn">Cancel</button>
+                <button class="btn btn-primary" id="saveGuestBtn">Save Guest</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Room Modal -->
+    <div class="modal-overlay" id="addRoomModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Add New Room</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="addRoomForm">
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">Room Number</label>
+                                <input type="text" class="form-control" id="roomNumber" required>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">Room Type</label>
+                                <select class="form-control" id="roomType" required>
+                                    <option value="standard">Standard</option>
+                                    <option value="deluxe">Deluxe</option>
+                                    <option value="suite">Suite</option>
+                                    <option value="villa">Villa</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">Capacity</label>
+                                <input type="number" class="form-control" id="roomCapacity" min="1" value="2" required>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">Price per Night</label>
+                                <input type="number" class="form-control" id="roomPrice" min="0" step="0.01" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" id="roomDescription" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Amenities</label>
+                        <div>
+                            <input type="checkbox" id="amenityWifi" checked>
+                            <label for="amenityWifi">WiFi</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="amenityAC" checked>
+                            <label for="amenityAC">Air Conditioning</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="amenityTV" checked>
+                            <label for="amenityTV">TV</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="amenityMinibar">
+                            <label for="amenityMinibar">Minibar</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="amenityBalcony">
+                            <label for="amenityBalcony">Balcony</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Status</label>
+                        <select class="form-control" id="roomStatus" required>
+                            <option value="available">Available</option>
+                            <option value="maintenance">Maintenance</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary modal-close-btn">Cancel</button>
+                <button class="btn btn-primary" id="saveRoomBtn">Save Room</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Check-in Modal -->
+    <div class="modal-overlay" id="checkInModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Guest Check-in</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="checkInDetails">
+                    <!-- Check-in details will be loaded here -->
+                </div>
+                <form id="checkInForm">
+                    <div class="form-group">
+                        <label class="form-label">ID Verification</label>
+                        <select class="form-control" id="idVerification" required>
+                            <option value="">Select Option</option>
+                            <option value="verified">Verified</option>
+                            <option value="not_verified">Not Verified</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Payment Method</label>
+                        <select class="form-control" id="paymentMethod" required>
+                            <option value="">Select Payment Method</option>
+                            <option value="credit_card">Credit Card</option>
+                            <option value="debit_card">Debit Card</option>
+                            <option value="cash">Cash</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Additional Notes</label>
+                        <textarea class="form-control" id="checkInNotes" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary modal-close-btn">Cancel</button>
+                <button class="btn btn-success" id="completeCheckInBtn">Complete Check-in</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Check-out Modal -->
+    <div class="modal-overlay" id="checkOutModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Guest Check-out</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="checkOutDetails">
+                    <!-- Check-out details will be loaded here -->
+                </div>
+                <form id="checkOutForm">
+                    <div class="form-group">
+                        <label class="form-label">Additional Charges</label>
+                        <div class="form-row">
+                            <div class="form-col">
+                                <input type="text" class="form-control" id="chargeDescription" placeholder="Description">
+                            </div>
+                            <div class="form-col">
+                                <input type="number" class="form-control" id="chargeAmount" placeholder="Amount" min="0" step="0.01">
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-secondary" style="margin-top: 10px;" id="addChargeBtn">Add Charge</button>
+                    </div>
+                    <div id="additionalCharges">
+                        <!-- Additional charges will be added here -->
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Room Condition</label>
+                        <select class="form-control" id="roomCondition" required>
+                            <option value="">Select Condition</option>
+                            <option value="good">Good</option>
+                            <option value="needs_cleaning">Needs Cleaning</option>
+                            <option value="damaged">Damaged</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Notes</label>
+                        <textarea class="form-control" id="checkOutNotes" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary modal-close-btn">Cancel</button>
+                <button class="btn btn-success" id="completeCheckOutBtn">Complete Check-out</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample Data
+        let bookings = [
+            {
+                id: "B001",
+                guestId: "G001",
+                guestName: "John Smith",
+                roomId: "101",
+                roomType: "Deluxe",
+                checkIn: "2023-06-15",
+                checkOut: "2023-06-20",
+                adults: 2,
+                children: 1,
+                status: "checked-out",
+                total: 1250,
+                requests: "Late check-in requested"
+            },
+            {
+                id: "B002",
+                guestId: "G002",
+                guestName: "Sarah Johnson",
+                roomId: "205",
+                roomType: "Suite",
+                checkIn: "2023-06-18",
+                checkOut: "2023-06-25",
+                adults: 2,
+                children: 0,
+                status: "checked-out",
+                total: 2100,
+                requests: ""
+            },
+            {
+                id: "B003",
+                guestId: "G003",
+                guestName: "Michael Brown",
+                roomId: "310",
+                roomType: "Standard",
+                checkIn: "2023-06-20",
+                checkOut: "2023-06-22",
+                adults: 1,
+                children: 0,
+                status: "checked-out",
+                total: 450,
+                requests: "High floor requested"
+            },
+            {
+                id: "B004",
+                guestId: "G004",
+                guestName: "Emily Davis",
+                roomId: "402",
+                roomType: "Villa",
+                checkIn: "2023-06-25",
+                checkOut: "2023-07-02",
+                adults: 4,
+                children: 2,
+                status: "confirmed",
+                total: 4200,
+                requests: "Crib needed for infant"
+            },
+            {
+                id: "B005",
+                guestId: "G005",
+                guestName: "Robert Wilson",
+                roomId: "115",
+                roomType: "Deluxe",
+                checkIn: new Date().toISOString().split('T')[0],
+                checkOut: "2023-07-05",
+                adults: 2,
+                children: 0,
+                status: "pending",
+                total: 1500,
+                requests: ""
+            },
+            {
+                id: "B006",
+                guestId: "G006",
+                guestName: "Jennifer Lee",
+                roomId: "220",
+                roomType: "Suite",
+                checkIn: new Date().toISOString().split('T')[0],
+                checkOut: "2023-07-08",
+                adults: 2,
+                children: 1,
+                status: "pending",
+                total: 2400,
+                requests: "Allergic to feathers"
+            },
+            {
+                id: "B007",
+                guestId: "G007",
+                guestName: "David Miller",
+                roomId: "305",
+                roomType: "Standard",
+                checkIn: "2023-07-01",
+                checkOut: "2023-07-03",
+                adults: 1,
+                children: 0,
+                status: "confirmed",
+                total: 450,
+                requests: ""
+            },
+            {
+                id: "B008",
+                guestId: "G008",
+                guestName: "Lisa Anderson",
+                roomId: "410",
+                roomType: "Villa",
+                checkIn: "2023-07-10",
+                checkOut: "2023-07-17",
+                adults: 3,
+                children: 2,
+                status: "confirmed",
+                total: 3850,
+                requests: "Late check-out requested"
+            }
+        ];
+
+        let guests = [
+            {
+                id: "G001",
+                firstName: "John",
+                lastName: "Smith",
+                email: "john.smith@example.com",
+                phone: "+1 (555) 123-4567",
+                address: "123 Main St, Anytown, USA",
+                idType: "passport",
+                idNumber: "AB123456",
+                totalStays: 3,
+                lastVisit: "2023-06-20"
+            },
+            {
+                id: "G002",
+                firstName: "Sarah",
+                lastName: "Johnson",
+                email: "sarah.j@example.com",
+                phone: "+1 (555) 234-5678",
+                address: "456 Oak Ave, Somewhere, USA",
+                idType: "drivers_license",
+                idNumber: "DL789012",
+                totalStays: 2,
+                lastVisit: "2023-06-25"
+            },
+            {
+                id: "G003",
+                firstName: "Michael",
+                lastName: "Brown",
+                email: "mbrown@example.com",
+                phone: "+1 (555) 345-6789",
+                address: "789 Pine Rd, Nowhere, USA",
+                idType: "passport",
+                idNumber: "CD345678",
+                totalStays: 1,
+                lastVisit: "2023-06-22"
+            },
+            {
+                id: "G004",
+                firstName: "Emily",
+                lastName: "Davis",
+                email: "emily.davis@example.com",
+                phone: "+1 (555) 456-7890",
+                address: "101 Elm St, Anyplace, USA",
+                idType: "national_id",
+                idNumber: "ID901234",
+                totalStays: 4,
+                lastVisit: "2023-07-02"
+            },
+            {
+                id: "G005",
+                firstName: "Robert",
+                lastName: "Wilson",
+                email: "rwilson@example.com",
+                phone: "+1 (555) 567-8901",
+                address: "202 Maple Dr, Somewhere, USA",
+                idType: "passport",
+                idNumber: "EF567890",
+                totalStays: 2,
+                lastVisit: "2023-07-05"
+            },
+            {
+                id: "G006",
+                firstName: "Jennifer",
+                lastName: "Lee",
+                email: "jlee@example.com",
+                phone: "+1 (555) 678-9012",
+                address: "303 Cedar Ln, Nowhere, USA",
+                idType: "drivers_license",
+                idNumber: "DL012345",
+                totalStays: 1,
+                lastVisit: "2023-07-08"
+            },
+            {
+                id: "G007",
+                firstName: "David",
+                lastName: "Miller",
+                email: "dmiller@example.com",
+                phone: "+1 (555) 789-0123",
+                address: "404 Birch Rd, Anytown, USA",
+                idType: "passport",
+                idNumber: "GH678901",
+                totalStays: 3,
+                lastVisit: "2023-07-03"
+            
